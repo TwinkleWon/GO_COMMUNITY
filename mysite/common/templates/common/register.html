@@ -4,6 +4,9 @@
 {% if error_message %}
 <div class="alert alert-danger" role="alert">{{ error_message }}</div>
 {% endif %}
+{% if success_message %}
+<div class="alert alert-success" role="alert">{{ success_message }}</div>
+{% endif %}
 <form id="registerForm" action="{% url 'common:register' %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
@@ -14,10 +17,10 @@
 {% block script %}
 <script>
     $('#registerForm').on('submit', function() {
-        let username = $('#username');
-        let password = $('#password');
-        let fist_name = $('#fist_name');
-        let email = $('#email');
+        let username = $('#id_username');  // form 필드의 id
+        let password = $('#id_password');  // form 필드의 id
+        let first_name = $('#id_first_name');  // form 필드의 id
+        let email = $('#id_email');  // form 필드의 id
 
         if (username.val() == '') {
             alert('아이디를 입력하세요.');
@@ -27,9 +30,9 @@
             alert('비밀번호를 입력하세요.');
             password.focus();
             return false;
-        } else if (fist_name.val() == '') {
+        } else if (first_name.val() == '') {
             alert('이름을 입력하세요.');
-            fist_name.focus();
+            first_name.focus();
             return false;
         } else if (email.val() == '') {
             alert('이메일을 입력하세요.');
