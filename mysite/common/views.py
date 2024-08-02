@@ -103,36 +103,33 @@ def common_password(request):
 def common_register(request):
     # 템플릿으로 넘겨줄 정보
     context = {}
-        
+
     if request.method == "POST":
         # 회원가입 폼
         form = RegisterForm(request.POST)
-        
+
         # 넘어온 값 검증
         if form.is_valid():
             register_cd = form.cleaned_data
-            
+
             # 아이디에 해당하는 사용자 정보 조회
-            user = User.objects.filter(username=register_cd["username"])
-            
-            # 사용자 유무 확인    
-            if user is not None:
+            if User.objects.filter(username=register_cd["username"]).exists():
                 context["form"] = form
                 context["error_message"] = "사용중인 아이디입니다."
                 return render(request, "common/register.html", context)
-            
+
             # DB에 사용자 정보 등록
             user = User.objects.create(
-                username=register_cd["username"], 
-                password=make_password(register_cd["username"]), 
+                username=register_cd["username"],
+                password=make_password(register_cd["password"]),  # 비밀번호를 해싱하여 저장
                 first_name=register_cd["first_name"],
                 email=register_cd["email"]
             )
-            
+
             context["form"] = LoginForm()
             context["success_message"] = "사용자를 추가하였습니다. 로그인을 해주세요."
             return render(request, "common/login.html", context)
-        
+
     # 회원가입 폼
     form = RegisterForm()
     context["form"] = form
