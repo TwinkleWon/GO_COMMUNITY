@@ -2,84 +2,59 @@
 
 {% block content %}
 
-<div class="row">
-    <!-- 정보 수정 -->
-    <div class="col-md-4">
-        {% if error_message %}
-        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
-        {% endif %}
 
-        {% if success_message %}
-        <div class="alert alert-success" role="alert">{{ success_message }}</div>
-        {% endif %}
+<!-- 정보 수정 -->
+<div class="col-md-4">
+    {% if profile_error_message %}
+    <div class="alert alert-danger" role="alert">{{ profile_error_message }}</div>
+    {% endif %}
 
-        <div class="card">
-            <div class="card-header">
-                정보 수정
-            </div>
-            <form id="loginForm" action="{% url 'common:login' %}" method="post">
-                {% csrf_token %}
-                <div class="card-body">
-                    {{ form.as_div }}
-                </div>
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-primary">로그인</button>
-                    <a href="{% url 'common:find_username' %}" class="btn btn-success">정보 수정</a>
-                </div>
-            </form>
+    {% if profile_success_message %}
+    <div class="alert alert-success" role="alert">{{ profile_success_message }}</div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-header">
+            정보 수정
         </div>
-    </div>
-    <!-- 정보 수정 -->
-
-    <!-- 비밀번호 수정 -->
-    <div class="col-md-4">
-        {% if error_message %}
-        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
-        {% endif %}
-
-        {% if success_message %}
-        <div class="alert alert-success" role="alert">{{ success_message }}</div>
-        {% endif %}
-
-        <div class="card">
-            <div class="card-header">
-                정보 수정
+        <form id="profileForm" action="{% url 'common:profile' %}" method="post">
+            {% csrf_token %}
+            <div class="card-body">
+                {{ profile_form.as_div }}
             </div>
-            <form id="loginForm" action="{% url 'common:login' %}" method="post">
-                {% csrf_token %}
-                <div class="card-body">
-                    {{ form.as_div }}
-                </div>
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-primary">로그인</button>
-                    <a href="{% url 'common:find_username' %}" class="btn btn-success">정보 수정</a>
-                </div>
-            </form>
-        </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">정보 수정</button>
+            </div>
+        </form>
     </div>
-    <!--// 비밀번호 수정 -->
 </div>
-
+<!-- 정보 수정 -->
 
 {% endblock %}
 
 {% block script %}
 <script>
-    $("#loginForm").validate({
+    $("#profileForm").validate({
         rules: {
-            username: {
+            first_name: {
                 required: true,
+                minlength: 2,
+                maxlength: 4,
             },
-            password: {
+            email: {
                 required: true,
+                email: true,
             },
         },
         messages: {
-            username: {
+            first_name: {
                 required: "필수 입력입니다.",
+                minlength: jQuery.validator.format("2글자 이상, 4글자 이하로 입력해주세요."),
+                maxlength: jQuery.validator.format("2글자 이상, 4글자 이하로 입력해주세요."),
             },
-            password: {
-              required: "필수 입력입니다.",
+            email: {
+                required: "필수 입력입니다.",
+                email: "올바른 형식의 이메일을 입력하세요."
             }
         },
         errorClass: "mt-2 text-danger",
