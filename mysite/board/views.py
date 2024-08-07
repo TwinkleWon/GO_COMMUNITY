@@ -1,3 +1,6 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 
-# Create your views here.
+# 목록, /board/
+def board_list(request):
+    return HttpResponse('/board/')
