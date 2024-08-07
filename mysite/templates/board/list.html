@@ -20,9 +20,63 @@
         {% endfor %}
     {% else %}
         <tr>
-            <td colspan="2">내용이 없습니다.</td>
+            <td colspan="3">내용이 없습니다.</td>
         </tr>
     {% endif %}
     </tbody>
 </table>
+
+<!-- 페이징 -->
+<nav>
+    <ul class="pagination">
+        {% if board_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First">처음</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ board_list.previous_page_number }}" aria-label="Previous">이전</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" aria-label="First">처음</a>
+            </li>
+            <li class="page-item disabled">
+                <a class="page-link" aria-label="Previous">이전</a>
+            </li>
+        {% endif %}
+        
+        <!-- 페이지 리스트 -->
+        {% for page_number in board_list.paginator.page_range %}
+            {% if page_number >= board_list.number|add:-3 and page_number <= board_list.number|add:3 %}
+                {% if page_number == board_list.number %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ page_number }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <!--// 페이지 리스트 -->
+      
+        {% if board_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ board_list.next_page_number }}" aria-label="Next">다음</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ board_list.paginator.num_pages }}" aria-label="Last">마지막</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" aria-label="Next">다음</a>
+            </li>
+            <li class="page-item disabled">
+                <a class="page-link" aria-label="Last">마지막</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+<!-- // 페이징 -->
 {% endblock %}
