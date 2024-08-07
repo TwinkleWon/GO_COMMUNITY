@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 def main_page(request):
     context = {}
     return render(request, "common/main.html", context)
-    
+
 # 로그인, /common/login/
 def common_login(request):
     # 템플릿으로 넘겨줄 정보
@@ -97,7 +97,7 @@ def common_profile(request):
     context["profile_form"] = ProfileForm(initial={'first_name': request.user.first_name, 'email': request.user.email})
     context["password_form"] = PasswordForm()
     return render(request, "common/profile.html", context)
-
+    
 # 비밀번호 수정, /common/password/
 @login_required
 def common_password(request):
@@ -116,47 +116,42 @@ def common_password(request):
             request.user.set_password(cd["password"])
             request.user.save()
             
-            context["profile_form"] = ProfileForm(initial={'first_name': request.user.first_name, 'email': request.user.email})
-            context["password_form"] = PasswordForm()
-            context["password_success_message"] = "사용자 비밀번호를 수정하였습니다."
-            return render(request, "common/profile.html", context)
-        
-    # 비밀번호 수정 폼
-    context["profile_form"] = ProfileForm(initial={'first_name': request.user.first_name, 'email': request.user.email})
-    context["password_form"] = PasswordForm()
-    return render(request, "common/profile.html", context)
+            return redirect('common:login')
     
 # 회원가입, /common/register/
 def common_register(request):
     # 템플릿으로 넘겨줄 정보
     context = {}
-
+        
     if request.method == "POST":
         # 회원가입 폼
         form = RegisterForm(request.POST)
-
+        
         # 넘어온 값 검증
         if form.is_valid():
             register_cd = form.cleaned_data
-
+            
             # 아이디에 해당하는 사용자 정보 조회
-            if User.objects.filter(username=register_cd["username"]).exists():
+            user = User.objects.filter(username=register_cd["username"])
+            
+            # 사용자 유무 확인    
+            if user is not None:
                 context["form"] = form
                 context["error_message"] = "사용중인 아이디입니다."
                 return render(request, "common/register.html", context)
-
+            
             # DB에 사용자 정보 등록
             user = User.objects.create(
-                username=register_cd["username"],
-                password=make_password(register_cd["password"]),  # 비밀번호를 해싱하여 저장
+                username=register_cd["username"], 
+                password=make_password(register_cd["username"]), 
                 first_name=register_cd["first_name"],
                 email=register_cd["email"]
             )
-
+            
             context["form"] = LoginForm()
             context["success_message"] = "사용자를 추가하였습니다. 로그인을 해주세요."
             return render(request, "common/login.html", context)
-
+        
     # 회원가입 폼
     form = RegisterForm()
     context["form"] = form
