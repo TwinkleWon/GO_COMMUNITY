@@ -132,7 +132,7 @@ def common_register(request):
             register_cd = form.cleaned_data
             
             # 아이디에 해당하는 사용자 정보 조회
-            user = User.objects.filter(username=register_cd["username"])
+            user = User.objects.filter(username=register_cd["username"]).first()
             
             # 사용자 유무 확인    
             if user is not None:
@@ -143,7 +143,7 @@ def common_register(request):
             # DB에 사용자 정보 등록
             user = User.objects.create(
                 username=register_cd["username"], 
-                password=make_password(register_cd["username"]), 
+                password=make_password(register_cd["password"]),  # 수정: 비밀번호를 제대로 설정
                 first_name=register_cd["first_name"],
                 email=register_cd["email"]
             )
