@@ -1,9 +1,10 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect, render , get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+from django.contrib.auth import logout, authenticate, login
 from board.models import Board
 from board.forms import CreateForm
 
@@ -73,27 +74,45 @@ def board_create(request):
             b = Board.objects.create(title=cd["title"], content=cd["content"], author=request.user)
             b.save()
             
+            # 메시지
+            messages.success(request, "게시글이 등록되었습니다.")
+            
             # 목록으로 이동
-            return redirect("board:list")
-    
-    # messages.error(request, mark_safe("오류입니다.<br>다시하세요."))
-    # messages.success(request, mark_safe("성공입니다.<br>다시하세요."))
+            return redirect("board:read", b.id)    
     
     # 등록 화면
     return render(request, "board/create.html", context)
 
-# 보기
+# 보기, /board/<board_id>/
 def board_read(request, board_id):
-     # 페이지 번호
+    # 페이지 번호
     page = request.GET.get("page", 1)
     
-    #게시글 
+    # 게시글
     b = get_object_or_404(Board, pk=board_id)
     
-    
     context = {
-        "page" : page,
-        "board" : b,
+        "page": page,
+        "board": b,    
     }
     
     return render(request, "board/read.html", context)
+
+# 삭제, /board/<board_id>/delete/
+def board_delete(request, board_id):
+    # 게시글
+    b = get_object_or_404(Board, pk=board_id)
+    
+    # 삭제 권한 확인
+    if request.user.username != b.author.username:
+        logout(request)
+        return redirect("main_page")
+    
+    # 삭제
+    b.delete()
+    
+    # 메시지
+    messages.success(request, "게시글이 삭제되었습니다.")
+    
+    # 목록으로 이동
+    return redirect("board:list")
