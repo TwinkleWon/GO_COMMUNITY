@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
+
 import sentry_sdk
 
 sentry_sdk.init(
-    dsn="https://ceb5706c6c101db3887eac928754e89d@o4507745713258496.ingest.us.sentry.io/4507745740718081",
+    dsn=os.environ.get("SENTRY_DSN"),  # 비어 있으면 Sentry 비활성화
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     traces_sample_rate=1.0,
@@ -22,7 +24,6 @@ sentry_sdk.init(
     profiles_sample_rate=1.0,
 )
 
-import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,10 +34,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-@4u(26eonkn0q=pqtuy#k12_43d3yy68uv8x6qr(rc3gjq_v_x"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-dev-only-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = []
 
